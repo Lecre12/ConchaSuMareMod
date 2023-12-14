@@ -27,7 +27,7 @@ namespace ConchaSuMare
                 instance = this;
             }
             mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
-            mls.LogInfo("Lecre.migerMod is loading");
+            mls.LogInfo("Lecre.ConchaSuMareMod is loading");
 
             harmony.PatchAll(typeof(ConchaSuMare));
             harmony.PatchAll(typeof(FallvoidPatch));
