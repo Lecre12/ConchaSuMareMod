@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using conchaSuMare.Objects;
 using GameNetcodeStuff;
 using HarmonyLib;
 using System;
@@ -13,7 +14,7 @@ namespace ConchaSuMare.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class FallvoidPatch : HarmonyPatch
     {
-        static List<PlayerControllerB> playerExecutedSound;
+        public static List<PlayerSoundStatus> playerSoundStatusList;
         static AudioClip newSFX;
         static ManualLogSource mls;
 
@@ -22,16 +23,26 @@ namespace ConchaSuMare.Patches
         static void startEventListener()
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
+            if (playerSoundStatusList.Count > 0)
+            {
+                playerSoundStatusList.Clear();
+            }
             // Load the audio file
+            mls.LogInfo("TIPO5");
             string location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
+            mls.LogInfo("TIPO6");
             string modFileName = "conchaSuMare.dll";
+            mls.LogInfo("TIPO7");
             string modPath = location.TrimEnd(modFileName.ToCharArray());
+            mls.LogInfo("TIPO8");
             string soundPath = modPath + "CONCHA.wav";
+            mls.LogInfo("TIPO9");
             ((MonoBehaviour)ConchaSuMare.instance).StartCoroutine(LoadAudio("file:///" + soundPath, sound =>
             {
                 newSFX = sound;
             }));
-            playerExecutedSound = new List<PlayerControllerB>();
+            mls.LogInfo("TIPO1");
+            mls.LogInfo("TIPO4");
         }
 
         static IEnumerator LoadAudio(string url, Action<AudioClip> callback)
@@ -63,26 +74,39 @@ namespace ConchaSuMare.Patches
         [HarmonyPatch("Update")]
         [HarmonyPostfix]
 
-        static void SoundVoidPatch(ref PlayerControllerB __instance)
+       static void SoundVoidPatch(ref PlayerControllerB __instance)
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
+            mls.LogInfo("TIPO2");
             PlayerControllerB playerRef = __instance;
+            mls.LogInfo("TIPO10");
+            PlayerSoundStatus playerSoundStatus = new PlayerSoundStatus(playerRef);
             CauseOfDeath causeOfDeath = playerRef.causeOfDeath;
+            
             if (playerRef.isPlayerDead && (causeOfDeath == CauseOfDeath.Gravity))
             {
-                if (!playerExecutedSound.Contains(playerRef))
+                if (!playerSoundStatusList.Contains(playerSoundStatus))
                 {
-                    AudioSource audioSource = playerRef.gameObject.AddComponent<AudioSource>();
-                    audioSource.clip = newSFX;
-                    audioSource.Play();
-                    playerExecutedSound.Add(playerRef);
-                    mls.LogInfo("CONCHA TU MAIIII, one memeber of the crew fell to the void, what a loser xD");
+                    playerSoundStatusList.Add(playerSoundStatus);
+                }
+                else
+                {
+                    playerSoundStatus = playerSoundStatusList[playerSoundStatusList.IndexOf(playerSoundStatus)];
+                    if (!playerSoundStatus._status)
+                    {
+                        AudioSource audioSource = playerRef.gameObject.AddComponent<AudioSource>();
+                        audioSource.clip = newSFX;
+                        audioSource.Play();
+                        playerSoundStatus._status = true;
+                        mls.LogInfo("CONCHA TU MAIIII, one memeber of the crew fell to the void, what a loser xD");
+                    }
                 }
                 
-            }else if (!playerRef.isPlayerDead)
+            }else if (!playerRef.isPlayerDead && playerSoundStatusList.IndexOf(playerSoundStatus) != -1)
             {
-                playerExecutedSound.Remove(playerRef);
+                playerSoundStatusList.Remove(playerSoundStatus);
             }
+            mls.LogInfo("TIPO11");
         }
 
 
