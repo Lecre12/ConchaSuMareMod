@@ -4,6 +4,7 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -12,24 +13,24 @@ namespace ConchaSuMare.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class FallvoidPatch : HarmonyPatch
     {
-        static bool done;
+        static List<PlayerControllerB> playerExecutedSound;
         static AudioClip newSFX;
         static ManualLogSource mls;
 
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
-        static void prepareAudio()
+        static void startEventListener()
         {
-            done = false;
+            playerExecutedSound = new List<PlayerControllerB>();
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
             // Load the audio file
             string location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
-            string text = "conchaSuMare.dll";
-            string text2 = location.TrimEnd(text.ToCharArray());
-            string path = text2 + "CONCHA.wav";
-            ((MonoBehaviour)ConchaSuMare.instance).StartCoroutine(LoadAudio("file:///" + path, clip =>
+            string modFileName = "conchaSuMare.dll";
+            string modPath = location.TrimEnd(modFileName.ToCharArray());
+            string soundPath = modPath + "CONCHA.wav";
+            ((MonoBehaviour)ConchaSuMare.instance).StartCoroutine(LoadAudio("file:///" + soundPath, sound =>
             {
-                newSFX = clip;
+                newSFX = sound;
             }));
         }
 
@@ -66,18 +67,27 @@ namespace ConchaSuMare.Patches
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
             PlayerControllerB playerRef = __instance;
-            CauseOfDeath causeOfDeath = __instance.causeOfDeath;
-            if (playerRef.isPlayerDead && !done && (causeOfDeath == CauseOfDeath.Gravity || causeOfDeath == CauseOfDeath.Unknown))
+            CauseOfDeath causeOfDeath = playerRef.causeOfDeath;
+            if (playerRef.isPlayerDead && (causeOfDeath == CauseOfDeath.Gravity))
             {
-                done = true;
-                // Play the audio file
-                AudioSource audioSource = playerRef.gameObject.AddComponent<AudioSource>();
-                audioSource.clip = newSFX;
-                audioSource.Play();
-                mls.LogInfo("CONCHA TU MAIIII, one memeber of the crew fell to the void, what a loser xD");
+                if (!playerExecutedSound.Contains(playerRef))
+                {
+                    AudioSource audioSource = playerRef.gameObject.AddComponent<AudioSource>();
+                    audioSource.clip = newSFX;
+                    audioSource.Play();
+                    playerExecutedSound.Add(playerRef);
+                    mls.LogInfo("CONCHA TU MAIIII, one memeber of the crew fell to the void, what a loser xD");
+                }
+            }else if (!playerRef.isPlayerDead)
+            {
+                playerExecutedSound.Remove(playerRef);
             }
+
             
+
         }
+
+
 
     }
 
