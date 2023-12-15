@@ -21,7 +21,6 @@ namespace ConchaSuMare.Patches
         [HarmonyPostfix]
         static void startEventListener()
         {
-            playerExecutedSound = new List<PlayerControllerB>();
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
             // Load the audio file
             string location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
@@ -32,6 +31,7 @@ namespace ConchaSuMare.Patches
             {
                 newSFX = sound;
             }));
+            playerExecutedSound = new List<PlayerControllerB>();
         }
 
         static IEnumerator LoadAudio(string url, Action<AudioClip> callback)
@@ -78,13 +78,11 @@ namespace ConchaSuMare.Patches
                     playerExecutedSound.Add(playerRef);
                     mls.LogInfo("CONCHA TU MAIIII, one memeber of the crew fell to the void, what a loser xD");
                 }
+                
             }else if (!playerRef.isPlayerDead)
             {
                 playerExecutedSound.Remove(playerRef);
             }
-
-            
-
         }
 
 
