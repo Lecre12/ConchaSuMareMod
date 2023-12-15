@@ -23,26 +23,16 @@ namespace ConchaSuMare.Patches
         static void startEventListener()
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
-            if (playerSoundStatusList.Count > 0)
-            {
                 playerSoundStatusList.Clear();
-            }
             // Load the audio file
-            mls.LogInfo("TIPO5");
             string location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
-            mls.LogInfo("TIPO6");
             string modFileName = "conchaSuMare.dll";
-            mls.LogInfo("TIPO7");
             string modPath = location.TrimEnd(modFileName.ToCharArray());
-            mls.LogInfo("TIPO8");
             string soundPath = modPath + "CONCHA.wav";
-            mls.LogInfo("TIPO9");
             ((MonoBehaviour)ConchaSuMare.instance).StartCoroutine(LoadAudio("file:///" + soundPath, sound =>
             {
                 newSFX = sound;
             }));
-            mls.LogInfo("TIPO1");
-            mls.LogInfo("TIPO4");
         }
 
         static IEnumerator LoadAudio(string url, Action<AudioClip> callback)
@@ -77,9 +67,7 @@ namespace ConchaSuMare.Patches
        static void SoundVoidPatch(ref PlayerControllerB __instance)
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
-            mls.LogInfo("TIPO2");
             PlayerControllerB playerRef = __instance;
-            mls.LogInfo("TIPO10");
             PlayerSoundStatus playerSoundStatus = new PlayerSoundStatus(playerRef);
             CauseOfDeath causeOfDeath = playerRef.causeOfDeath;
             
@@ -106,7 +94,6 @@ namespace ConchaSuMare.Patches
             {
                 playerSoundStatusList.Remove(playerSoundStatus);
             }
-            mls.LogInfo("TIPO11");
         }
 
 

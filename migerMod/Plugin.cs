@@ -35,7 +35,6 @@ namespace ConchaSuMare
 
             FallvoidPatch.playerSoundStatusList = new List<PlayerSoundStatus>();
             harmony.PatchAll(typeof(FallvoidPatch));
-            mls.LogInfo("TIPO3");
         }
 
     }
