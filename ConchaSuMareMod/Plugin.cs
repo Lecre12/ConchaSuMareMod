@@ -12,7 +12,7 @@ namespace ConchaSuMare
     {
         private const string modGUID = "Lecre.ConchaSuMareMod";
         private const string modName = "LC ConchaSuMareMod";
-        private const string modVersion = "1.1.2";
+        private const string modVersion = "1.1.3";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
@@ -33,7 +33,6 @@ namespace ConchaSuMare
 
             harmony.PatchAll(typeof(ConchaSuMare));
 
-            FallvoidPatch.playerSoundStatusList = new List<PlayerSoundStatus>();
             harmony.PatchAll(typeof(FallvoidPatch));
         }
 

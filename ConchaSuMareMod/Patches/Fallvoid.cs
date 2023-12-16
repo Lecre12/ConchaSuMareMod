@@ -14,7 +14,7 @@ namespace ConchaSuMare.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     internal class FallvoidPatch : HarmonyPatch
     {
-        public static List<PlayerSoundStatus> playerSoundStatusList;
+        public static List<PlayerSoundStatus> playerSoundStatusList = new List<PlayerSoundStatus>();
         static AudioClip newSFX;
         static ManualLogSource mls;
 
