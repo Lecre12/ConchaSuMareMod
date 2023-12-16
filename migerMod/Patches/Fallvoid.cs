@@ -23,7 +23,6 @@ namespace ConchaSuMare.Patches
         static void startEventListener()
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
-                playerSoundStatusList.Clear();
             // Load the audio file
             string location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
             string modFileName = "conchaSuMare.dll";
