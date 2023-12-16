@@ -1,6 +1,7 @@
 # Goofy ahh audio +
 With this mod, when a crew memeber dies from falling damage or falling to the void, a new sound will apear.
 If you want to feel like Kirbi when you fall in to the void because you are very bad at the parkour, just download this mod.
+- Demo: https://youtu.be/2xMFHflv87E
 
 # Installation
 1. Install BepInEx
