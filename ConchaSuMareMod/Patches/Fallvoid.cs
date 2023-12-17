@@ -6,6 +6,8 @@ using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -15,7 +17,7 @@ namespace ConchaSuMare.Patches
     internal class FallvoidPatch : HarmonyPatch
     {
         public static List<PlayerSoundStatus> playerSoundStatusList = new List<PlayerSoundStatus>();
-        static AudioClip newSFX;
+        public static AudioClip newSFX;
         static ManualLogSource mls;
 
         [HarmonyPatch("Start")]
@@ -23,18 +25,41 @@ namespace ConchaSuMare.Patches
         static void startEventListener()
         {
             mls = BepInEx.Logging.Logger.CreateLogSource("Lecre.conchaSuMareMod");
+            mls.LogInfo("Starting to upload audio");
             // Load the audio file
-            string location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
-            string modFileName = "conchaSuMare.dll";
-            string modPath = location.TrimEnd(modFileName.ToCharArray());
-            string soundPath = modPath + "CONCHA.wav";
-            ((MonoBehaviour)ConchaSuMare.instance).StartCoroutine(LoadAudio("file:///" + soundPath, sound =>
+            string location;
+
+            if (ConchaSuMare.instance != null)
             {
-                newSFX = sound;
-            }));
+                location = ((BaseUnityPlugin)ConchaSuMare.instance).Info.Location;
+                string modFileName = "conchaSuMare.dll";
+                string modPath = location.TrimEnd(modFileName.ToCharArray());
+                string soundPath = modPath + "CONCHA.wav";
+                mls.LogInfo("IS THE AUDIO FILE LOCATED HERE??: " + soundPath);
+                ((MonoBehaviour)ConchaSuMare.instance).StartCoroutine(LoadAudio("file:///" + soundPath, sound =>
+                {
+                    newSFX = sound;
+                }));                
+                
+            }
+            else
+            {
+                mls.LogWarning("Instance was readed like <null> retriying to load audio files");
+                string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+                string modPath = Path.GetDirectoryName(assemblyLocation);
+                string soundPath = Path.Combine(modPath, "CONCHA.wav");
+                mls.LogInfo("(else)IS THE AUDIO FILE LOCATED HERE??: " + soundPath);
+                CoroutineHelper.StartCoroutine(LoadAudio("file:///" + soundPath, sound =>
+                {
+                    newSFX = sound;
+                }));
+            }
+
+            
+            
         }
 
-        static IEnumerator LoadAudio(string url, Action<AudioClip> callback)
+        public static IEnumerator LoadAudio(string url, Action<AudioClip> callback)
         {
             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.WAV))
             {
@@ -70,6 +95,11 @@ namespace ConchaSuMare.Patches
             PlayerSoundStatus playerSoundStatus = new PlayerSoundStatus(playerRef);
             CauseOfDeath causeOfDeath = playerRef.causeOfDeath;
             
+            if(__instance == null)
+            {
+                mls.LogInfo("We have a problem... playerRef = null :(");
+            }
+
             if (playerRef.isPlayerDead && (causeOfDeath == CauseOfDeath.Gravity))
             {
                 if (!playerSoundStatusList.Contains(playerSoundStatus))

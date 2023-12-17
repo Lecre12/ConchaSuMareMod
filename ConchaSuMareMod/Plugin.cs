@@ -4,6 +4,9 @@ using HarmonyLib;
 using ConchaSuMare.Patches;
 using System.Collections.Generic;
 using conchaSuMare.Objects;
+using System.Threading;
+using System.IO;
+using System.Reflection;
 
 namespace ConchaSuMare
 {
@@ -12,7 +15,7 @@ namespace ConchaSuMare
     {
         private const string modGUID = "Lecre.ConchaSuMareMod";
         private const string modName = "LC ConchaSuMareMod";
-        private const string modVersion = "1.1.3";
+        private const string modVersion = "1.2.0";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
@@ -23,18 +26,32 @@ namespace ConchaSuMare
 
         void Awake()
         {
-
+            mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
+            instance = this;
+            DontDestroyOnLoad (gameObject);
             if (instance == null)
             {
                 instance = this;
+                DontDestroyOnLoad (gameObject);
+            }else
+            {
+                mls.LogInfo("Happy kirbi :)");
             }
-            mls = BepInEx.Logging.Logger.CreateLogSource(modGUID);
+            
             mls.LogInfo("Lecre.ConchaSuMareMod is loading");
 
-            harmony.PatchAll(typeof(ConchaSuMare));
+            
+            
 
+            if(instance == null)
+            {
+                mls.LogError("INSTANCE IS NULL 2 TIMES IN A ROW, CONCHASUMARE WILL BE DISABLED");
+            }
+
+            harmony.PatchAll(typeof(ConchaSuMare));
             harmony.PatchAll(typeof(FallvoidPatch));
         }
+
 
     }
 }
