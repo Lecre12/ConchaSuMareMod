@@ -6,7 +6,7 @@ If you want to feel like Kirbi when you fall in to the void because you are very
 
 # Installation
 1. Install BepInEx
-2. Drop the DLL and all the stuff inside of the BepInEx/plugins/ folder or create a new folder and put the stuff inside (all together).
+2. Drop the DLL and all the stuff inside of the BepInEx/plugins/ folder or create a new folder and put the stuff inside.
 3. Run the game and Enjoy :)
 4. Try to not fall int to the void, don't be like Kirbi ;)
 
@@ -26,3 +26,5 @@ If you want to feel like Kirbi when you fall in to the void because you are very
 # Version 1.2.0
 - Fixed some random bug that didn't loaded audio files
 - I thank Nahulala for notifying me of this bug and helping me correct it.
+# Version 1.2.1
+- Modified assembled name.

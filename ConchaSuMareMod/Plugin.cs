@@ -15,7 +15,7 @@ namespace ConchaSuMare
     {
         private const string modGUID = "Lecre.ConchaSuMareMod";
         private const string modName = "LC ConchaSuMareMod";
-        private const string modVersion = "1.2.0";
+        private const string modVersion = "1.2.1";
 
         private readonly Harmony harmony = new Harmony(modGUID);
 
